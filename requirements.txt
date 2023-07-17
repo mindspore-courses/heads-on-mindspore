@@ -1,0 +1,9 @@
+numpy
+mindspore==2.0.0
+pylint
+mindcv
+mindinsight
+fire
+inspect
+tqdm
+ipdb
