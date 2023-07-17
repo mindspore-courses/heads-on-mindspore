@@ -2,12 +2,9 @@
 """
 code refer to https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
 """
-import torch as t
-# from torch import nn
 import numpy as np
-
-import mindspore as ms
 import mindspore.nn as nn
+import mindspore.ops as ops
 
 
 class TransformerNet(nn.Cell):
@@ -15,20 +12,20 @@ class TransformerNet(nn.Cell):
         super(TransformerNet, self).__init__()
 
         # Down sample layers
-        self.initial_layers = nn.Sequential(
+        self.initial_layers = nn.SequentialCell(
             ConvLayer(3, 32, kernel_size=9, stride=1),
             nn.InstanceNorm2d(32, affine=True),
-            nn.ReLU(True),
+            nn.ReLU(),
             ConvLayer(32, 64, kernel_size=3, stride=2),
             nn.InstanceNorm2d(64, affine=True),
-            nn.ReLU(True),
+            nn.ReLU(),
             ConvLayer(64, 128, kernel_size=3, stride=2),
             nn.InstanceNorm2d(128, affine=True),
-            nn.ReLU(True),
+            nn.ReLU(),
         )
 
         # Residual layers
-        self.res_layers = nn.Sequential(
+        self.res_layers = nn.SequentialCell(
             ResidualBlock(128),
             ResidualBlock(128),
             ResidualBlock(128),
@@ -37,24 +34,24 @@ class TransformerNet(nn.Cell):
         )
 
         # Upsampling Layers
-        self.upsample_layers = nn.Sequential(
+        self.upsample_layers = nn.SequentialCell(
             UpsampleConvLayer(128, 64, kernel_size=3, stride=1, upsample=2),
             nn.InstanceNorm2d(64, affine=True),
-            nn.ReLU(True),
+            nn.ReLU(),
             UpsampleConvLayer(64, 32, kernel_size=3, stride=1, upsample=2),
             nn.InstanceNorm2d(32, affine=True),
-            nn.ReLU(True),
+            nn.ReLU(),
             ConvLayer(32, 3, kernel_size=9, stride=1)
         )
 
-    def forward(self, x):
+    def construct(self, x):
         x = self.initial_layers(x)
         x = self.res_layers(x)
         x = self.upsample_layers(x)
         return x
 
 
-class ConvLayer(nn.Module):
+class ConvLayer(nn.Cell):
     """
     add ReflectionPad for Conv
     """
@@ -65,13 +62,13 @@ class ConvLayer(nn.Module):
         self.reflection_pad = nn.ReflectionPad2d(reflection_padding)
         self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
 
-    def forward(self, x):
+    def construct(self, x):
         out = self.reflection_pad(x)
         out = self.conv2d(out)
         return out
 
 
-class UpsampleConvLayer(nn.Module):
+class UpsampleConvLayer(nn.Cell):
     """UpsampleConvLayer
     instead of ConvTranspose2d, we do UpSample + Conv2d
     see ref for why.
@@ -85,16 +82,16 @@ class UpsampleConvLayer(nn.Module):
         self.reflection_pad = nn.ReflectionPad2d(reflection_padding)
         self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
 
-    def forward(self, x):
+    def construct(self, x):
         x_in = x
         if self.upsample:
-            x_in = t.nn.functional.interpolate(x_in, scale_factor=self.upsample)
+            x_in = ops.interpolate(x_in, scale_factor=self.upsample)
         out = self.reflection_pad(x_in)
         out = self.conv2d(out)
         return out
 
 
-class ResidualBlock(nn.Module):
+class ResidualBlock(nn.Cell):
     """ResidualBlock
     introduced in: https://arxiv.org/abs/1512.03385
     recommended architecture: http://torch.ch/blog/2016/02/04/resnets.html
@@ -108,7 +105,7 @@ class ResidualBlock(nn.Module):
         self.in2 = nn.InstanceNorm2d(channels, affine=True)
         self.relu = nn.ReLU()
 
-    def forward(self, x):
+    def construct(self, x):
         residual = x
         out = self.relu(self.in1(self.conv1(x)))
         out = self.in2(self.conv2(out))
