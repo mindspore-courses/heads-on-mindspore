@@ -11,6 +11,7 @@ class TransformerNet(nn.Cell):
     code refer to 
     https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
     """
+    
     def __init__(self):
         super().__init__()
 
@@ -118,3 +119,4 @@ class ResidualBlock(nn.Cell):
         out = self.in2(self.conv2(out))
         out = out + residual
         return out
+    
