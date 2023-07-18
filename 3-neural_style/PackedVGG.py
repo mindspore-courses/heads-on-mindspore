@@ -1,4 +1,5 @@
 # coding:utf8
+# pylint: disable=C0103
 from collections import namedtuple
 import mindspore.nn as nn
 from mindcv.models import create_model

@@ -1,4 +1,5 @@
 # coding:utf8
+# pylint: disable=C0103
 """
 code refer to https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
 """
