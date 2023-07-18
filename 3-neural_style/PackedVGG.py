@@ -1,7 +1,6 @@
 # coding:utf8
 from collections import namedtuple
 
-import mindspore as ms 
 import mindspore.nn as nn
 from mindcv.models import create_model
 
