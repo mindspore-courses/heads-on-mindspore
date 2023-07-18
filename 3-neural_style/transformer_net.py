@@ -1,14 +1,15 @@
 # coding:utf8
 # pylint: disable=C0103
-"""
-code refer to https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
-"""
 import numpy as np
 import mindspore.nn as nn
 import mindspore.ops as ops
 
 
 class TransformerNet(nn.Cell):
+    """
+    code refer to 
+    https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
+    """
     def __init__(self):
         super(TransformerNet, self).__init__()
 
@@ -46,6 +47,7 @@ class TransformerNet(nn.Cell):
         )
 
     def construct(self, x):
+        """input: x"""
         x = self.initial_layers(x)
         x = self.res_layers(x)
         x = self.upsample_layers(x)
@@ -64,6 +66,7 @@ class ConvLayer(nn.Cell):
         self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
 
     def construct(self, x):
+        """input: x"""
         out = self.reflection_pad(x)
         out = self.conv2d(out)
         return out
@@ -84,6 +87,7 @@ class UpsampleConvLayer(nn.Cell):
         self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
 
     def construct(self, x):
+        """input: x"""
         x_in = x
         if self.upsample:
             x_in = ops.interpolate(x_in, scale_factor=self.upsample)
@@ -107,6 +111,7 @@ class ResidualBlock(nn.Cell):
         self.relu = nn.ReLU()
 
     def construct(self, x):
+        """input: x"""
         residual = x
         out = self.relu(self.in1(self.conv1(x)))
         out = self.in2(self.conv2(out))
