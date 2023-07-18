@@ -1,3 +1,4 @@
+"""model"""
 # coding:utf8
 # pylint: disable=C0103
 import numpy as np
@@ -11,7 +12,7 @@ class TransformerNet(nn.Cell):
     https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
     """
     def __init__(self):
-        super(TransformerNet, self).__init__()
+        super().__init__()
 
         # Down sample layers
         self.initial_layers = nn.SequentialCell(
@@ -60,7 +61,7 @@ class ConvLayer(nn.Cell):
     """
 
     def __init__(self, in_channels, out_channels, kernel_size, stride):
-        super(ConvLayer, self).__init__()
+        super().__init__()
         reflection_padding = int(np.floor(kernel_size / 2))
         self.reflection_pad = nn.ReflectionPad2d(reflection_padding)
         self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
@@ -80,7 +81,7 @@ class UpsampleConvLayer(nn.Cell):
     """
 
     def __init__(self, in_channels, out_channels, kernel_size, stride, upsample=None):
-        super(UpsampleConvLayer, self).__init__()
+        super().__init__()
         self.upsample = upsample
         reflection_padding = int(np.floor(kernel_size / 2))
         self.reflection_pad = nn.ReflectionPad2d(reflection_padding)
@@ -103,7 +104,7 @@ class ResidualBlock(nn.Cell):
     """
 
     def __init__(self, channels):
-        super(ResidualBlock, self).__init__()
+        super().__init__()
         self.conv1 = ConvLayer(channels, channels, kernel_size=3, stride=1)
         self.in1 = nn.InstanceNorm2d(channels, affine=True)
         self.conv2 = ConvLayer(channels, channels, kernel_size=3, stride=1)
@@ -117,4 +118,3 @@ class ResidualBlock(nn.Cell):
         out = self.in2(self.conv2(out))
         out = out + residual
         return out
-
