@@ -1,9 +1,8 @@
-numpy
+numpy== 1.20.1
+mindcv==0.2.2
+mindinsight==2.0.0
+fire==0.5.0
+tqdm==4.59.0
+ipdb==0.13.13
 mindspore==2.0.0
-pylint
-mindcv
-mindinsight
-fire
-inspect
-tqdm
-ipdb
+pylint==2.7.4
