@@ -112,3 +112,18 @@ class ResidualBlock(nn.Cell):
         out = out + residual
         return out
 
+class ConvLayer1(nn.Cell):
+    """
+    add ReflectionPad for Conv
+    """
+
+    def __init__(self, in_channels, out_channels, kernel_size, stride):
+        super(ConvLayer1, self).__init__()
+        reflection_padding = int(np.floor(kernel_size / 2))
+        self.reflection_pad = nn.ReflectionPad2d(reflection_padding)
+        self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
+
+    def construct(self, x):
+        out = self.reflection_pad(x)
+        out = self.conv2d(out)
+        return out
