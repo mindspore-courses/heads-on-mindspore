@@ -7,11 +7,7 @@ import mindspore.ops as ops
 
 
 class TransformerNet(nn.Cell):
-    """
-    code refer to 
-    https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py
-    """
-    
+    """code refer to https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/transformer_net.py"""
     def __init__(self):
         super().__init__()
 
