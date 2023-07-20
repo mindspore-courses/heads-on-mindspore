@@ -4,7 +4,7 @@
 import os
 import tqdm
 import ipdb
-import cv2
+from PIL import Image
 
 import mindspore
 from mindspore import load_checkpoint, load_param_into_net, context
@@ -192,7 +192,8 @@ def stylize(**kwargs):
     # style transfer and save output
     output = style_model(content_image)
     output_data = output.cpu().data[0]
-    cv2.imwrite(((output_data / 255)).clamp(min=0, max=1), opt.result_path)
+    img = dt.vision.ToPIL()(((output_data / 255)).clamp(min=0, max=1))
+    img.save(opt.result_path)
 
 
 if __name__ == '__main__':
