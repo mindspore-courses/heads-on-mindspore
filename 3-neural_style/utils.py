@@ -1,9 +1,6 @@
 '''utils'''
 # coding:utf8
 # pylint: disable=C0103
-# from itertools import chain
-import time
-import numpy as np
 import mindspore.dataset as dt
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]

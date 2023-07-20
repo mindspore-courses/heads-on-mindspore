@@ -143,23 +143,24 @@ def train(**kwargs):
 
             for ii, (x, _) in tqdm.tqdm(enumerate(dataloader)):
 
-            # Train
-            total_loss, (content_loss, style_loss, y) = train_step(x)
+                # Train
+                total_loss, L = train_step(x)
+                content_loss, style_loss, y = L[0], L[1], L[2]
 
-            # Loss smooth for visualization
-            content_meter.update(content_loss.item())
-            style_meter.update(style_loss.item())
+                # Loss smooth for visualization
+                content_meter.update(content_loss.item())
+                style_meter.update(style_loss.item())
 
-            if (ii + 1) % opt.plot_every == 0:
-                if os.path.exists(opt.debug_file):
-                    ipdb.set_trace()
+                if (ii + 1) % opt.plot_every == 0:
+                    if os.path.exists(opt.debug_file):
+                        ipdb.set_trace()
 
-                # visualization
-                summary_record.add_value('scalar', 'content_loss', content_meter.eval())
-                summary_record.add_value('scalar', 'style_loss', style_meter.eval())
-                # denorm input/output, since we have applied (utils.normalize_batch)
-                summary_record.add_value('image', 'output', (y.data.cpu()[0] * 0.225 + 0.45).clamp(min=0, max=1))
-                summary_record.add_value('image', 'input', (x.data.cpu()[0] * 0.225 + 0.45).clamp(min=0, max=1))
+                    # visualization
+                    summary_record.add_value('scalar', 'content_loss', content_meter.eval())
+                    summary_record.add_value('scalar', 'style_loss', style_meter.eval())
+                    # denorm input/output, since we have applied (utils.normalize_batch)
+                    summary_record.add_value('image', 'output', (y.data.cpu()[0] * 0.225 + 0.45).clamp(min=0, max=1))
+                    summary_record.add_value('image', 'input', (x.data.cpu()[0] * 0.225 + 0.45).clamp(min=0, max=1))
 
         # save checkpoint
         mindspore.save_checkpoint(transformer, 'checkpoints/%s_style.ckpt' % epoch)
