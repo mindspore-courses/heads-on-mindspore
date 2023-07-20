@@ -4,7 +4,6 @@
 import os
 import tqdm
 import ipdb
-from PIL import Image
 
 import mindspore
 from mindspore import load_checkpoint, load_param_into_net, context
