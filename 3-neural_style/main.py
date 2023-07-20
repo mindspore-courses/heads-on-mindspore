@@ -1,6 +1,6 @@
 '''main'''
 # coding:utf8
-# pylint: disable=C0103
+# pylint: disable=W0612
 import os
 import tqdm
 import ipdb
@@ -21,7 +21,7 @@ mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 
 
-class Config(object):
+class Config():
     '''setting'''
     # General Args
     use_gpu = True
@@ -172,7 +172,7 @@ def stylize(**kwargs):
 
     for k_, v_ in kwargs.items():
         setattr(opt, k_, v_)
-  
+
     # input image preprocess
     content_image = dt.vision.read_image(opt.content_path)
     content_transform = dt.transforms.Compose([
