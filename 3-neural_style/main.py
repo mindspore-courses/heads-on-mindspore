@@ -73,9 +73,9 @@ def train(**kwargs):
     dataset = dt.ImageFolderDataset(opt.data_root)
     dataset = dataset.map(operations=transfroms, input_columns=[
                           "image"])
-    dataset = dataset.apply(lambda x: x * 255)
+    # dataset = dataset.apply(lambda x: x * 255)
     dataset = dataset.batch(batch_size=opt.batch_size)
-    dataloader = dt.GeneratorDataset(dataset)
+    dataloader = dataset.create_dict_iterator()
 
     # style transformer network
     transformer = TransformerNet()
@@ -91,7 +91,7 @@ def train(**kwargs):
         param.requires_grad = False
 
     # Optimizer
-    optimizer = nn.Adam(transformer.get_parameters(), opt.lr)
+    optimizer = nn.Adam(transformer.trainable_params(), opt.lr)
 
     with SummaryRecord(log_dir="./summary_dir", network=transformer) as summary_record:
         # Get style image
@@ -143,6 +143,7 @@ def train(**kwargs):
             for ii, (x, _) in tqdm.tqdm(enumerate(dataloader)):
 
                 # Train
+                transformer.set_train()
                 total_loss, L = train_step(x)
                 content_loss, style_loss, y = L[0], L[1], L[2]
 
@@ -183,7 +184,7 @@ def stylize(**kwargs):
     content_image = content_image.unsqueeze(0).detach()
 
     # model setup
-    style_model = TransformerNet().set_eval()
+    style_model = TransformerNet().set_train(False)
     # 将模型参数存入parameter的字典中，这里加载的是上面训练过程中保存的模型参数
     param_dict = load_checkpoint(opt.model_path)
     # 将参数加载到网络中

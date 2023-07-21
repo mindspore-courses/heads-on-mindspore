@@ -190,3 +190,4 @@ def get_data(opt):
                         word2ix=word2ix,
                         ix2word=ix2word)
     return pad_data, word2ix, ix2word
+
