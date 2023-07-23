@@ -1,5 +1,5 @@
 # coding:utf8
-import torch as t
+import mindspore
 import numpy as np
 import json
 import jieba
@@ -13,7 +13,7 @@ class Config:
     padding = '</PAD>'
     max_words = 10000
     min_appear = 2
-    save_path = 'caption.pth'
+    save_path = 'caption.ckpt'
 
 
 # START='</START>'
@@ -83,11 +83,11 @@ def process(**kwargs):
         'end': '</EOS>',
         'readme': readme
     }
-    t.save(results, opt.save_path)
+    mindspore.save_checkpoint(results, opt.save_path)
     print('save file in %s' % opt.save_path)
 
     def test(ix, ix2=4):
-        results = t.load(opt.save_path)
+        results = mindspore.load_checkpoint(opt.save_path)
         ix2word = results['ix2word']
         examples = results['caption'][ix][4]
         sentences_p = (''.join([ix2word[ii] for ii in examples]))

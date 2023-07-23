@@ -3,10 +3,9 @@
 import mindspore
 import mindspore.ops as ops
 from mindspore import dtype as mstype
-# from torch.utils import data
+import mindspore.dataset as ds
 import os
 from PIL import Image
-# import torchvision as tv
 import numpy as np
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -103,11 +102,9 @@ class CaptionDataset():
 
 def get_dataloader(opt):
     dataset = CaptionDataset(opt)
-    dataloader = data.DataLoader(dataset,
-                                 batch_size=opt.batch_size,
-                                 shuffle=opt.shuffle,
-                                 num_workers=opt.num_workers,
-                                 collate_fn=create_collate_fn(dataset.padding, dataset.end))
+    dataloader = ds.GeneratorDataset(dataset, num_parallel_workers=opt.num_workers, shuffle=opt.shuffle)
+    dataloader = dataloader.batch(batch_size=opt.batch_size)
+    dataloader = dataloader.apply(create_collate_fn(dataset.padding, dataset.end))
     return dataloader
 
 

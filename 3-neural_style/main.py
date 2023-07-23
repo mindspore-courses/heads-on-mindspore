@@ -60,7 +60,6 @@ def train(**kwargs):
     else:
         context.set_context(mode=context.GRAPH_MODE, device_target="CPU")
 
-    # vis = utils.Visualizer(opt.env)可视化
 
     # Data loading
     transfroms = dt.transforms.Compose([

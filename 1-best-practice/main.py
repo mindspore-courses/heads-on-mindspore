@@ -10,7 +10,7 @@ import mindspore.ops as ops
 from mindspore.train.summary import SummaryRecord
 import mindspore.dataset as ds
 from mindspore import load_checkpoint, load_param_into_net, context
-from mindspore.train import Accuracy, ConfusionMatrix, LossMonitor, CheckpointConfig, ModelCheckpoint, TimeMonitor, Model, Loss
+from mindspore.train import  ConfusionMatrix, Loss
 from tqdm import tqdm
 
 

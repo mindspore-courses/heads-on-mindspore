@@ -20,9 +20,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# import torch
-# from torch.autograd import Variable
-# from torch.nn.functional import log_softmax
+import mindspore
+import mindspore.ops as ops
+from mindspore import dtype as mstype
 import heapq
 
 
@@ -152,7 +152,7 @@ class CaptionGenerator(object):
         def get_topk_words(embeddings, state):
             output, new_states = self.rnn(embeddings, state)
             output = self.classifier(output.squeeze(0))
-            logprobs = log_softmax(output, dim=1)
+            logprobs = ops.log_softmax(output, axis=1)
             logprobs, words = logprobs.topk(self.beam_size, 1)
             return words.data, logprobs.data, new_states
 
@@ -172,18 +172,19 @@ class CaptionGenerator(object):
         for _ in range(self.max_caption_length - 1):
             partial_captions_list = partial_captions.extract()
             partial_captions.reset()
-            input_feed = torch.LongTensor([c.sentence[-1]
-                                           for c in partial_captions_list])
+            input_feed = mindspore.Tensor([c.sentence[-1]
+                                           for c in partial_captions_list], dtype=mstype.int64)
+
             if rnn_input.is_cuda:
-                input_feed = input_feed.cuda()
-            input_feed = Variable(input_feed, volatile=True)
+                input_feed = input_feed
+            input_feed = mindspore.Tensor(input_feed)
             state_feed = [c.state for c in partial_captions_list]
             if isinstance(state_feed[0], tuple):
                 state_feed_h, state_feed_c = zip(*state_feed)
-                state_feed = (torch.cat(state_feed_h, 1),
-                              torch.cat(state_feed_c, 1))
+                state_feed = (ops.cat(state_feed_h, 1),ops.cat(state_feed_c, 1))
+
             else:
-                state_feed = torch.cat(state_feed, 1)
+                state_feed = ops.cat(state_feed, 1)
 
             embeddings = self.embedder(input_feed).view(1, len(input_feed), -1)
             words, logprobs, new_states = get_topk_words(
