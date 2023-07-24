@@ -1,18 +1,10 @@
-'''
-Description: 
-Author: Xiao
-Date: 2023-07-06 22:34:40
-LastEditTime: 2023-07-07 20:04:47
-LastEditors: Xiao
-'''
+'''The configuration file for the project'''
 # coding:utf8
 import warnings
 from mindspore import context
 
-# import torch as t
-
-
 class DefaultConfig(object):
+    '''The configuration class'''
     save_model = './checkpoint'  # 模型保存路径
     summary_base_dir = "./summary_dir"
     model = 'SqueezeNet'  # 使用的模型，名字必须与models/__init__.py中的名字一致

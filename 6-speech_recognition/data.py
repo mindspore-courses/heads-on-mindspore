@@ -2,10 +2,10 @@
 #encoding=utf-8
 
 import os
-# import torch
+import mindspore
+from mindspore import dtype as mstype
+import mindspore.ops as ops
 import scipy.signal
-# from torch.utils.data import Dataset
-# from torch.utils.data import DataLoader
 from utils import parse_audio, process_label_file
 
 windows = {'hamming':scipy.signal.hamming, 'hann':scipy.signal.hann, 'blackman':scipy.signal.blackman,
@@ -14,7 +14,7 @@ audio_conf = {"sample_rate":16000, 'window_size':0.025, 'window_stride':0.01, 'w
 int2char = ["_", "'", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
             "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "]
 
-class SpeechDataset(Dataset):
+class SpeechDataset():
     def __init__(self, data_dir, data_set='train', normalize=True):
         self.data_set = data_set
         self.normalize = normalize
@@ -60,9 +60,9 @@ def collate_fn(batch):
     max_length = longest_sample.size(0)
     batch_size = len(batch)
     
-    inputs = torch.zeros(batch_size, max_length, feat_size)   #网络输入,相当于长度不等的补0
-    input_sizes = torch.IntTensor(batch_size)                 #输入每个样本的序列长度，即帧数
-    target_sizes = torch.IntTensor(batch_size)                #每句标签的长度
+    inputs = ops.zeros((batch_size, max_length, feat_size))   #网络输入,相当于长度不等的补0
+    input_sizes = mindspore.Tensor(batch_size, dtype=mstype.int32)               #输入每个样本的序列长度，即帧数
+    target_sizes = mindspore.Tensor(batch_size, dtype=mstype.int32)                #每句标签的长度
     targets = []
     input_size_list = []
     
@@ -76,7 +76,7 @@ def collate_fn(batch):
         input_size_list.append(seq_length)
         target_sizes[x] = len(label)
         targets.extend(label)
-    targets = torch.IntTensor(targets)
+    targets = mindspore.Tensor(targets, dtype=mstype.int32)
     return inputs, targets, input_sizes, input_size_list, target_sizes
 
 """
@@ -85,7 +85,7 @@ class torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False,
                                         collate_fn=<function default_collate>, 
                                         pin_memory=False, drop_last=False)
 """
-class SpeechDataLoader(DataLoader):
+class SpeechDataLoader():
     def __init__(self, *args, **kwargs):
         super(SpeechDataLoader, self).__init__(*args, **kwargs)
         self.collate_fn = collate_fn

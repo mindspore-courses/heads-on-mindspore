@@ -3,9 +3,11 @@
 #本文件提供载入音频文件的函数,提取音频对数幅度谱的函数以及处理文本标签的函数
 #语音的对数频谱作为网络的输入
 
-# import torch
 import librosa
-# import torchaudio
+import scipy.io.wavfile as wav
+import numpy as np
+import mindspore
+from mindspore import dtype as mstype
 
 def load_audio(path):
     """使用torchaudio读取音频
@@ -14,8 +16,7 @@ def load_audio(path):
     Returns:
         sound(numpy.ndarray)    : 单声道音频数据，如果是多声道进行平均(Samples * 1 channel)
     """
-    sound, _ = torchaudio.load(path)
-    sound = sound.numpy()
+    fs, sound = wav.read(path)
     if len(sound.shape) > 1:
         if sound.shape[1] == 1:
             sound = sound.squeeze()
@@ -40,8 +41,8 @@ def parse_audio(path, audio_conf, windows, normalize=False):
     window = windows[audio_conf['window']]
     D = librosa.stft(y, n_fft=n_fft, hop_length=hop_length,
                         win_length=win_length, window=window)
-    spect, phase = librosa.magphase(D) 
-    spect = torch.FloatTensor(spect)
+    spect, phase = librosa.magphase(D)
+    spect = mindspore.Tensor(spect, dtype=mstype.float32)
     spect = spect.log1p()
     
     #每句话自己做归一化

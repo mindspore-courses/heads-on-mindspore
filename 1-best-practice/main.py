@@ -1,7 +1,9 @@
+'''The main file for the project'''
 # coding:utf8
-from config import opt
 import os
 import logging
+import csv
+from config import opt
 import models
 from data.dataset import DogCat
 import mindspore
@@ -9,20 +11,19 @@ import mindspore.nn as nn
 import mindspore.ops as ops
 from mindspore.train.summary import SummaryRecord
 import mindspore.dataset as ds
-from mindspore import load_checkpoint, load_param_into_net, context
+from mindspore import load_checkpoint, load_param_into_net
 from mindspore.train import  ConfusionMatrix, Loss
 from tqdm import tqdm
 
-
 def write_csv(results, file_name):
-    import csv
+    '''write results in csv file'''
     with open(file_name, 'w') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'label'])
         writer.writerows(results)
 
-
 def train(**kwargs):
+    '''model traing'''
     opt._parse(kwargs)
     os.system(
         f"mindinsight start --summary-base-dir  {opt.summary_base_dir} --port=8080")
@@ -125,7 +126,7 @@ def train(**kwargs):
                 optimizer.learning_rate = lr
 
             previous_loss = loss_meter.eval()
-        pass
+
 
 
 def val(model, dataloader):
