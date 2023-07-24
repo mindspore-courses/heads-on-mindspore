@@ -14,6 +14,8 @@ import mindspore.dataset as ds
 from mindspore import load_checkpoint, load_param_into_net
 from mindspore.train import  ConfusionMatrix, Loss
 from tqdm import tqdm
+import ipdb
+from inspect import getsource
 
 def write_csv(results, file_name):
     '''write results in csv file'''
@@ -100,7 +102,7 @@ def train(**kwargs):
 
                     # 进入debug模式
                     if os.path.exists(opt.debug_file):
-                        import ipdb  # 断点调试
+                        # 断点调试
                         ipdb.set_trace()
 
             mindspore.save_checkpoint(model, "./" + opt.model + ".ckpt")
@@ -159,7 +161,6 @@ def help():
             python {0} help
     avaiable args:""".format(__file__))
 
-    from inspect import getsource
     source = (getsource(opt.__class__))
     print(source)
 
