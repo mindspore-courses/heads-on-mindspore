@@ -166,6 +166,7 @@ def help():
 
 
 def test(**kwargs):
+    '''model test'''
     opt._parse(kwargs)
     os.system(
         f"mindinsight start --summary-base-dir  {opt.summary_base_dir} --port=8080")

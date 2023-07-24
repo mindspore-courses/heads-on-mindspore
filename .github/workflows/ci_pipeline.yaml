@@ -39,7 +39,7 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        python -m pip install --user --upgrade pip==23.2
+        python -m pip install --user --upgrade pip==23.2.1
         pip install -r requirements.txt
     - name: Analysing the 1-best-practice code with pylint
       run: |
