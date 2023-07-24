@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 def write_csv(results, file_name):
     '''write results in csv file'''
-    with open(file_name, 'w') as f:
+    with open(file_name, 'w', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'label'])
         writer.writerows(results)
@@ -49,8 +49,7 @@ def train(**kwargs):
 
     # step3: 损失函数以及优化器
     criterion = nn.CrossEntropyLoss()
-    lr = opt.lr
-    optimizer = model.get_optimizer(lr, opt.weight_decay)  # 使用adam优化器
+    optimizer = model.get_optimizer(opt.lr, opt.weight_decay)  # 使用adam优化器
 
     # 前向传播
     def forward_fn(data, label):

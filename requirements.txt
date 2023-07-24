@@ -6,5 +6,5 @@ tqdm==4.59.0
 ipdb==0.13.13
 mindspore==2.0.0
 pylint==2.7.4
-librosa==0.10.0
-scipy==1.6.2
+librosa
+scipy
