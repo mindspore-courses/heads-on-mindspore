@@ -1,8 +1,10 @@
 '''The main file for the project'''
 # coding:utf8
+# pylint: disable=W0612
 import os
 import logging
 import csv
+from inspect import getsource
 from config import opt
 import models
 from data.dataset import DogCat
@@ -15,7 +17,6 @@ from mindspore import load_checkpoint, load_param_into_net
 from mindspore.train import  ConfusionMatrix, Loss
 from tqdm import tqdm
 import ipdb
-from inspect import getsource
 
 def write_csv(results, file_name):
     '''write results in csv file'''
@@ -113,8 +114,7 @@ def train(**kwargs):
             summary_record.add_value(
                 'scalar', 'eval_acc', val_accuracy)
 
-            logging.basicConfig(format="epoch:{epoch},lr:{lr},loss:{loss},train_cm:{train_cm},val_cm:{val_cm}".format(
-                epoch=epoch, loss=loss_meter.eval(), val_cm=str(val_cm.eval()), train_cm=str(confusion_matrix.eval()), lr=lr),
+            logging.basicConfig(f"epoch:{epoch},lr:{lr},loss:{loss_meter.eval()},train_cm:{str(confusion_matrix.eval())},val_cm:{str(val_cm.eval())}",
                 level=logging.DEBUG,
                 filename=opt.log_path,
                 filemode='a')
@@ -147,22 +147,21 @@ def val(model, dataloader):
     return confusion_matrix, accuracy
 
 
-def help():
+def m_help():
     """
-    打印帮助的信息： python file.py help
+    打印帮助的信息： python file.py m_help
     """
 
-    print("""
+    print(f"""
     usage : python file.py <function> [--args=value]
     <function> := train | test | help
     example: 
-            python {0} train --env='env0701' --lr=0.01
-            python {0} test --dataset='path/to/dataset/root/'
-            python {0} help
-    avaiable args:""".format(__file__))
+            python {__file__} train --env='env0701' --lr=0.01
+            python {__file__} test --dataset='path/to/dataset/root/'
+            python {__file__} help
+    avaiable args:""")
 
-    source = (getsource(opt.__class__))
-    print(source)
+    print(getsource(opt.__class__))
 
 
 def test(**kwargs):

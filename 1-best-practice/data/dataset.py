@@ -1,18 +1,14 @@
+'''data processing'''
 # coding:utf8
 import os
 from PIL import Image
-# from torch.utils import data
-import mindspore.dataset as ds
-import numpy as np
-# from torchvision import transforms as T
 import mindspore.dataset.vision as vision
 
-
 class DogCat:
+    """
+    主要目标： 获取所有图片的地址，并根据训练，验证，测试划分数据
+    """
     def __init__(self, root, transforms=None, train=True, test=False):
-        """
-        主要目标： 获取所有图片的地址，并根据训练，验证，测试划分数据
-        """
         self.test = test
         imgs = [os.path.join(root, img) for img in os.listdir(root)]
 

@@ -1,11 +1,4 @@
-'''
-Description: 
-Author: Xiao
-Date: 2023-07-06 14:44:12
-LastEditTime: 2023-07-07 14:12:43
-LastEditors: Xiao
-'''
-
+'''alexnet'''
 # coding:utf8
 import mindspore.nn as nn
 from .basic_module import BasicModule

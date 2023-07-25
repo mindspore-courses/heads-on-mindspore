@@ -3,7 +3,7 @@
 import warnings
 from mindspore import context
 
-class DefaultConfig(object):
+class DefaultConfig():
     '''The configuration class'''
     save_model = './checkpoint'  # 模型保存路径
     summary_base_dir = "./summary_dir"

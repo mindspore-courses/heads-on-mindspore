@@ -1,7 +1,6 @@
-from typing import Type, Union, List, Optional
+'''resnet34'''
 import mindspore.ops as F
 from mindspore import nn
-import mindspore.ops as ops
 from .basic_module import BasicModule
 
 
@@ -9,9 +8,8 @@ class ResidualBlock(nn.Cell):
     """
     实现子module: Residual Block
     """
-
     def __init__(self, inchannel, outchannel, stride=1, shortcut=None):
-        super(ResidualBlock, self).__init__()
+        super().__init__()
         self.left = nn.SequentialCell(
             nn.Conv2d(inchannel, outchannel, kernel_size=3,
                       stride=stride, padding=1, has_bias=False),
@@ -37,7 +35,7 @@ class ResNet34(BasicModule):
     """
 
     def __init__(self, num_classes=2):
-        super(ResNet34, self).__init__()
+        super().__init__()
         self.model_name = 'resnet34'
 
         # 前几层: 图像转换
@@ -68,7 +66,7 @@ class ResNet34(BasicModule):
         layers = []
         layers.append(ResidualBlock(inchannel, outchannel, stride, shortcut))
 
-        for i in range(1, block_num):
+        for _ in range(1, block_num):
             layers.append(ResidualBlock(outchannel, outchannel))
         return nn.Sequential(*layers)
 
