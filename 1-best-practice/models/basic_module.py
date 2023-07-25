@@ -1,14 +1,10 @@
 '''
-Description: 
-Author: Xiao
-Date: 2023-07-06 19:08:21
-LastEditTime: 2023-07-06 19:26:42
-LastEditors: Xiao
+base modle
 '''
 # coding:utf8
+import time
 import mindspore
 import mindspore.nn as nn
-import time
 
 
 class BasicModule(nn.Cell):
@@ -17,7 +13,7 @@ class BasicModule(nn.Cell):
     """
 
     def __init__(self):
-        super(BasicModule, self).__init__()
+        super().__init__()
         self.model_name = str(type(self))  # 默认名字
 
     def load(self, path):
@@ -38,6 +34,7 @@ class BasicModule(nn.Cell):
         return name
 
     def get_optimizer(self, lr, weight_decay):
+        """设置优化器"""
         return nn.Adam(self.trainable_params(), lr=lr, weight_decay=weight_decay)
 
 
@@ -47,8 +44,9 @@ class Flat(nn.Cell):
     """
 
     def __init__(self):
-        super(Flat, self).__init__()
+        super().__init__()
         # self.size = size
 
-    def forward(self, x):
+    def construct(self, x):
+        """input: x"""
         return x.view(x.size(0), -1)

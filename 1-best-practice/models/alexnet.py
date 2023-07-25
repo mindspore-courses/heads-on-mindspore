@@ -2,7 +2,6 @@
 # coding:utf8
 import mindspore.nn as nn
 from .basic_module import BasicModule
-import mindspore.ops as ops
 
 
 class AlexNet(BasicModule):
@@ -12,7 +11,7 @@ class AlexNet(BasicModule):
     """
 
     def __init__(self, num_classes=2):
-        super(AlexNet, self).__init__()
+        super().__init__()
 
         self.model_name = 'alexnet'
 
@@ -32,7 +31,7 @@ class AlexNet(BasicModule):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=3, stride=2),
         )
-        self.classifier = nn.Sequential(
+        self.classifier = nn.SequentialCell(
             nn.Dropout(),
             nn.Dense(256 * 6 * 6, 4096),
             nn.ReLU(),
@@ -43,6 +42,7 @@ class AlexNet(BasicModule):
         )
 
     def construct(self, x):
+        """input: x"""
         x = self.features(x)
         x = x.view(x.size(0), 256 * 6 * 6)
         x = self.classifier(x)

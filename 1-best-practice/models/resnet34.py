@@ -52,13 +52,13 @@ class ResNet34(BasicModule):
         self.layer4 = self._make_layer(512, 512, 3, stride=2)
 
         # 分类用的全连接
-        self.fc = nn.Linear(512, num_classes)
+        self.fc = nn.Dense(512, num_classes)
 
     def _make_layer(self, inchannel, outchannel, block_num, stride=1):
         """
         构建layer,包含多个residual block
         """
-        shortcut = nn.Sequential(
+        shortcut = nn.SequentialCell(
             nn.Conv2d(inchannel, outchannel, kernel_size=1,
                       stride=stride, has_bias=False),
             nn.BatchNorm2d(outchannel))
@@ -68,9 +68,10 @@ class ResNet34(BasicModule):
 
         for _ in range(1, block_num):
             layers.append(ResidualBlock(outchannel, outchannel))
-        return nn.Sequential(*layers)
+        return nn.SequentialCell(*layers)
 
     def construct(self, x):
+        """input: x"""
         x = self.pre(x)
         x = self.layer1(x)
         x = self.layer2(x)

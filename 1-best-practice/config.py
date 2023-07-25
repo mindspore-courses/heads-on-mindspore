@@ -8,7 +8,7 @@ class DefaultConfig():
     save_model = './checkpoint'  # 模型保存路径
     summary_base_dir = "./summary_dir"
     model = 'SqueezeNet'  # 使用的模型，名字必须与models/__init__.py中的名字一致
-    log_path = 'train./log'  # 日志文件
+    log_path = 'train.log'  # 日志文件
 
     train_data_root = '1-best-practice/data/train/'  # 训练集存放路径
     test_data_root = '1-best-practice/data/test1'  # 测试集存放路径

@@ -2,7 +2,6 @@
 import mindspore.nn as nn
 from mindspore.common import initializer as weight_init
 from mindspore.ops import operations as P
-import mindspore.ops as ops
 from .basic_module import BasicModule
 
 
@@ -13,7 +12,7 @@ class Fire(BasicModule):
 
     def __init__(self, inplanes, squeeze_planes, expand1x1_planes,
                  expand3x3_planes):
-        super(Fire, self).__init__()
+        super().__init__()
         self.inplanes = inplanes
         self.squeeze = nn.Conv2d(inplanes,
                                  squeeze_planes,
@@ -34,14 +33,16 @@ class Fire(BasicModule):
         self.concat = P.Concat(axis=1)
 
     def construct(self, x):
+        """input: x"""
         x = self.squeeze_activation(self.squeeze(x))
         return self.concat((self.expand1x1_activation(self.expand1x1(x)),
                             self.expand3x3_activation(self.expand3x3(x))))
 
 
 class SqueezeNet(nn.Cell):
+    '''SequeezeNet built'''
     def __init__(self, num_classes=2):
-        super(SqueezeNet, self).__init__()
+        super().__init__()
 
         self.features = nn.SequentialCell([
             nn.Conv2d(3,
@@ -98,6 +99,7 @@ class SqueezeNet(nn.Cell):
                                                 cell.bias.dtype))
 
     def construct(self, x):
+        """input: x"""
         x = self.features(x)
         x = self.dropout(x)
         x = self.final_conv(x)
