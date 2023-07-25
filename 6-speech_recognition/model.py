@@ -22,7 +22,7 @@ class SequenceWise(nn.Cell):
         Args:
             x :    PackedSequence
         """
-        x, batch_size_len = x.data, x.batch_sizes
+        # x, batch_size_len = x.data, x.batch_sizes
         #x.data:    sum(x_len) * num_features
         x = self.module(x)
         # x = nn.utils.rnn.PackedSequence(x, batch_size_len)
@@ -51,7 +51,7 @@ class BatchRNN(nn.Cell):
     """
     Add BatchNorm before rnn to generate a batchrnn layer
     """
-    def __init__(self, input_size, hidden_size, rnn_type=nn.LSTM, 
+    def __init__(self, input_size, hidden_size, rnn_type=nn.LSTM,
                     bidirectional=False, batch_norm=True, dropout=0.1):
         super(BatchRNN, self).__init__()
         self.input_size = input_size
@@ -60,7 +60,7 @@ class BatchRNN(nn.Cell):
         self.batch_norm = SequenceWise(nn.BatchNorm1d(input_size)) if batch_norm else None
         self.rnn = rnn_type(input_size=input_size, hidden_size=hidden_size,
                                 bidirectional=bidirectional, dropout = dropout, bias=False)
-        
+
     def construct(self, x):
         if self.batch_norm is not None:
             x = self.batch_norm(x)
@@ -82,7 +82,7 @@ class CTC_Model(nn.Cell):
         self.rnn_param = rnn_param
         self.num_class = num_class
         self.num_directions = 2 if rnn_param["bidirectional"] else 1
-        self._drop_out = drop_out
+        self.drop_out = drop_out
         
         rnn_input_size = rnn_param["rnn_input_size"]
         rnns = []
@@ -116,10 +116,9 @@ class CTC_Model(nn.Cell):
         self.fc = SequenceWise(fc)
         self.inference_softmax = BatchSoftmax()
     
-    def construct(self, x, dev=False):
-        x = self.rnns(x)
+    def construct(self, x, seq_len, dev=False):
+        x = self.rnns(x, seq_length=seq_len)
         x = self.fc(x)
-        # x, batch_seq = nn.utils.rnn.pad_packed_sequence(x, batch_first=False)
             
         out = self.inference_softmax(x)
         if dev:
@@ -128,10 +127,11 @@ class CTC_Model(nn.Cell):
 
     @staticmethod
     def save_package(model, optimizer=None, decoder=None, epoch=None, loss_results=None, dev_loss_results=None, dev_cer_results=None):
+        '''保存模型相关参数'''
         package = {
                 'rnn_param': model.rnn_param,
                 'num_class': model.num_class,
-                '_drop_out': model._drop_out,
+                '_drop_out': model.drop_out,
                 'state_dict': model.state_dict()
                 }
         if optimizer is not None:

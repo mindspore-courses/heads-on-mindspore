@@ -91,8 +91,7 @@ def gen_acrostic(model, start_words, ix2word, word2ix, prefix_words=None):
     """
     results = []
     start_word_len = len(start_words)
-    input = (t.Tensor([word2ix['<START>']]).view(1, 1).long())
-    if opt.use_gpu: input = input.cuda()
+    input = (Tensor([word2ix['<START>']]).view(1, 1).long())
     hidden = None
 
     index = 0  # 用来指示已经生成了多少句藏头诗
@@ -199,7 +198,7 @@ def train(**kwargs):
                     for word in list(u'春江花月夜凉如水'):
                         gen_poetry = ''.join(generate(model, word, ix2word, word2ix))
                         gen_poetries.append(gen_poetry)
-                    with open('gen_poem','a') as f:
+                    with open('gen_poem','a', encoding='utf-8') as f:
                         test = '</br>'.join([''.join(poetry) for poetry in gen_poetries])
                         f.write(test)
         save_checkpoint(model, '%s_%s.ckpt' % (opt.model_prefix, epoch))
@@ -245,6 +244,6 @@ def gen(**kwargs):
 
 
 if __name__ == '__main__':
-    # import fire
-    train()
-    # fire.Fire()
+    import fire
+
+    fire.Fire()
