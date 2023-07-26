@@ -8,6 +8,7 @@ on:
     branches: [ "mian" ]
     paths:
       - '1-best-practice/**'
+      - '!1-best-practice/models/**'
       - '2-AnimeGAN/**'
       - '3-neural_style/**'
       - '4-neural_poet_RNN/**'

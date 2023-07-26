@@ -1,5 +1,5 @@
 '''resnet34'''
-# pylint disable = E0401
+
 import mindspore.ops as F
 from mindspore import nn
 from .basic_module import BasicModule

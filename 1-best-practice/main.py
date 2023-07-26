@@ -83,7 +83,7 @@ def train(**kwargs):
             confusion_matrix.clear()
             model.set_train()
 
-            for ii, (data, label) in tqdm(enumerate(train_dataloader)):
+            for i, (data, label) in tqdm(enumerate(train_dataloader)):
                 # 损失值以及预测值
                 loss, logits = train_step(data, label)
 
@@ -94,11 +94,11 @@ def train(**kwargs):
                 # detach 一下更安全保险
                 confusion_matrix.update(logits, label)
 
-                if (ii + 1) % opt.print_freq == 0:
+                if (i + 1) % opt.print_freq == 0:
                     summary_record.add_value(
                         'scalar', 'train_loss', loss)
 
-                    summary_record.record(ii + 1, train_network=model)
+                    summary_record.record(i + 1, train_network=model)
 
                     # 进入debug模式
                     if os.path.exists(opt.debug_file):
@@ -138,7 +138,7 @@ def val(model, dataloader):
     model.set_train(False)
     confusion_matrix = ConfusionMatrix(
         num_classes=2, normalize='no_norm', threshold=0.5)
-    for ii, (val_input, label) in tqdm(enumerate(dataloader)):
+    for (val_input, label) in dataloader:
         score = model(val_input)
         confusion_matrix.update(score.squeeze(),
                                 label.long())
@@ -187,7 +187,7 @@ def test(**kwargs):
     results = []
 
     model.set_train(False)
-    for ii, (data, path) in tqdm(enumerate(test_dataloader)):
+    for (data, path) in test_dataloader:
 
         score = model(data)
         probability = ops.softmax(score, 1)[:, 0].tolist()
