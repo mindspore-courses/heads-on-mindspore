@@ -175,7 +175,7 @@ def train(**kwargs):
                 # 尽可能把假图片判别为错误
                 noises = ops.randn(opt.batch_size, opt.nz, 1, 1).copy()
                 error_d_fake = train_step_d1(noises, fake_labels)
-                output = netg(noises)  # 根据噪声生成假图
+                _ = netg(noises)  # 根据噪声生成假图
 
                 error_d = error_d_fake + error_d_real
 
