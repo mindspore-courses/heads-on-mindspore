@@ -9,7 +9,7 @@ class NetG(nn.Cell):
     """
 
     def __init__(self, opt):
-        super(NetG, self).__init__()
+        super().__init__()
         ngf = opt.ngf  # 生成器feature map数
 
         self.main = nn.SequentialCell(
@@ -44,8 +44,9 @@ class NetG(nn.Cell):
             # 输出形状：3 x 96 x 96
         )
 
-    def construct(self, input):
-        return self.main(input)
+    def construct(self, x):
+        """input: x"""
+        return self.main(x)
 
 
 class NetD(nn.Cell):
@@ -54,7 +55,7 @@ class NetD(nn.Cell):
     """
 
     def __init__(self, opt):
-        super(NetD, self).__init__()
+        super().__init__()
         ndf = opt.ndf
         self.main = nn.SequentialCell(
             # 输入 3 x 96 x 96
@@ -85,5 +86,6 @@ class NetD(nn.Cell):
             nn.Sigmoid()  # 输出一个数(概率)
         )
 
-    def construct(self, input):
-        return self.main(input).view(-1)
+    def construct(self, x):
+        """input: x"""
+        return self.main(x).view(-1)

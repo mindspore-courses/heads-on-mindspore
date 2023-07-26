@@ -1,4 +1,4 @@
-'''main'''
+'''主程序'''
 import os
 import mindspore
 import mindspore.ops as ops
@@ -13,7 +13,8 @@ from model import NetG, NetD
 import ipdb  # 断点调试
 
 
-class Config(object):
+class Config():
+    '''配置类'''
     data_path = 'data/'  # 数据集存放路径
     num_workers = 4  # 多进程加载数据所用的进程数
     image_size = 96  # 图片尺寸
@@ -53,6 +54,7 @@ opt = Config()
 
 
 def train(**kwargs):
+    '''模型训练，参数对应配置类'''
     for k_, v_ in kwargs.items():
         setattr(opt, k_, v_)
 
@@ -69,14 +71,15 @@ def train(**kwargs):
         v.HWC2CHW()
     ]
 
-    dataset = ds.ImageFolderDataset(opt.data_path, shuffle=False, num_parallel_workers=opt.num_workers)
-    dataset = dataset.map(operations=trans,input_columns="image",num_parallel_workers=opt.num_workers)
+    dataset = ds.ImageFolderDataset(opt.data_path, shuffle=False,
+                                    num_parallel_workers=opt.num_workers)
+    dataset = dataset.map(operations=trans,input_columns="image",
+                          num_parallel_workers=opt.num_workers)
     dataset = dataset.batch(batch_size=opt.batch_size, drop_remainder=True)
     dataloader = dataset.create_dict_iterator()
 
     # 网络
     netg, netd = NetG(opt), NetD(opt)
-    def map_location(storage, loc): return storage
     if opt.netd_path:
         # 将模型参数存入parameter的字典中，这里加载的是上面训练过程中保存的模型参数
         param_dict = load_checkpoint(opt.netd_path)
@@ -161,9 +164,9 @@ def train(**kwargs):
             errorg_meter.clear()
             netg.set_train()
             netd.set_train()
-            for ii, (img, _) in tqdm(enumerate(dataloader)):
+            for i, (img, _) in tqdm(enumerate(dataloader)):
                 real_img = img
-                if ii % opt.d_every == 0:
+                if i % opt.d_every == 0:
                     # 训练判别器
                     # 尽可能的把真图片判别为正确
                     error_d_real, output = train_step_d(real_img, true_labels)
@@ -177,7 +180,7 @@ def train(**kwargs):
 
                 errord_meter.update(error_d)
 
-                if ii % opt.g_every == 0:
+                if i % opt.g_every == 0:
                     # 训练生成器
                     noises = noises.copy()
                     noises = ops.randn(opt.batch_size, opt.nz, 1, 1).copy()
@@ -185,7 +188,7 @@ def train(**kwargs):
 
                     errorg_meter.update(error_g)
 
-                if opt.vis and ii % opt.plot_every == opt.plot_every - 1:
+                if opt.vis and i % opt.plot_every == opt.plot_every - 1:
                     # 可视化
                     if os.path.exists(opt.debug_file):
                         ipdb.set_trace()
@@ -197,13 +200,13 @@ def train(**kwargs):
                         'scalar', 'errord', errord_meter.eval())
                     summary_record.add_value(
                         'scalar', 'errorg', errorg_meter.eval())
-                    summary_record.record(ii + 1, train_network=netg)
-                    summary_record.record(ii + 1, train_network=netd)
+                    summary_record.record(i + 1, train_network=netg)
+                    summary_record.record(i + 1, train_network=netd)
 
         if (epoch+1) % opt.save_every == 0:
             # 保存模型、图片
-            mindspore.save_checkpoint(netd, "./netd{}.ckpt".format(epoch))
-            mindspore.save_checkpoint(netg, "./netg{}.ckpt".format(epoch))
+            mindspore.save_checkpoint(netd, f"./netd{epoch}.ckpt")
+            mindspore.save_checkpoint(netg, f"./netg{epoch}.ckpt")
             errord_meter.clear()
             errorg_meter.clear()
 
