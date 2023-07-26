@@ -24,22 +24,22 @@ def _parseRawData(author=None, constrain=None, src='./chinese-poetry/json/simpli
         # para 形如 "-181-村橋路不端，數里就迴湍。積壤連涇脉，高林上笋竿。早嘗甘蔗淡，
         # 生摘琵琶酸。（「琵琶」，嚴壽澄校《張祜詩集》云：疑「枇杷」之誤。）
         # 好是去塵俗，煙花長一欄。"
-        result, number = re.subn(u"（.*）", "", para)
-        result, number = re.subn(u"{.*}", "", result)
-        result, number = re.subn(u"《.*》", "", result)
-        result, number = re.subn(u"《.*》", "", result)
-        result, number = re.subn(u"[\]\[]", "", result)
+        result, _ = re.subn("（.*）", "", para)
+        result, _ = re.subn("{.*}", "", result)
+        result, _ = re.subn("《.*》", "", result)
+        result, _ = re.subn("《.*》", "", result)
+        result, _ = re.subn("[\]\[]", "", result)
         r = ""
         for s in result:
             if s not in set('0123456789-'):
                 r += s
-        r, number = re.subn(u"。。", u"。", r)
+        r, _ = re.subn("。。", "。", r)
         return r
 
     def handleJson(file):
         # print file
         rst = []
-        data = json.loads(open(file).read())
+        data = json.loads(open(file, encoding='utf-8').read())
         for poetry in data:
             pdata = ""
             if (author is not None and poetry.get("author") != author):
@@ -47,7 +47,7 @@ def _parseRawData(author=None, constrain=None, src='./chinese-poetry/json/simpli
             p = poetry.get("paragraphs")
             flag = False
             for s in p:
-                sp = re.split(u"[，！。]", s)
+                sp = re.split("[，！。]", s)
                 for tr in sp:
                     if constrain is not None and len(tr) != constrain and len(tr) != 0:
                         flag = True
@@ -114,16 +114,16 @@ def pad_sequences(sequences,
     # checking for consistency in the main loop below.
     sample_shape = tuple()
     for s in sequences:
-        if len(s) > 0:  # pylint: disable=g-explicit-length-test
+        if len(s) > 0:
             sample_shape = np.asarray(s).shape[1:]
             break
 
     x = (np.ones((num_samples, maxlen) + sample_shape) * value).astype(dtype)
     for idx, s in enumerate(sequences):
-        if not len(s):  # pylint: disable=g-explicit-length-test
+        if not len(s):
             continue  # empty list/array was found
         if truncating == 'pre':
-            trunc = s[-maxlen:]  # pylint: disable=invalid-unary-operand-type
+            trunc = s[-maxlen:]
         elif truncating == 'post':
             trunc = s[:maxlen]
         else:
@@ -168,7 +168,7 @@ def get_data(opt):
     ix2word = {_ix: _word for _word, _ix in list(word2ix.items())}
 
     # 为每首诗歌加上起始符和终止符
-    for i in range(len(data)):
+    for i, _ in enumerate(data):
         data[i] = ["<START>"] + list(data[i]) + ["<EOP>"]
 
     # 将每首诗歌保存的内容由‘字’变成‘数’
@@ -189,4 +189,3 @@ def get_data(opt):
                         word2ix=word2ix,
                         ix2word=ix2word)
     return pad_data, word2ix, ix2word
-
