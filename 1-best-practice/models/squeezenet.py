@@ -1,4 +1,5 @@
 ''''squeezenet'''
+# pylint: disable=E0401
 import mindspore.nn as nn
 from mindspore.common import initializer as weight_init
 from mindspore.ops import operations as P

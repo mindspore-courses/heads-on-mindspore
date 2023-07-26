@@ -1,4 +1,5 @@
 '''resnet34'''
+# pylint disable = E0401
 import mindspore.ops as F
 from mindspore import nn
 from .basic_module import BasicModule
@@ -46,15 +47,15 @@ class ResNet34(BasicModule):
             nn.MaxPool2d(kernel_size=3, stride=2, pad_mode="pad", padding=1))
 
         # 重复的layer，分别有3，4，6，3个residual block
-        self.layer1 = self._make_layer(64, 128, 3)
-        self.layer2 = self._make_layer(128, 256, 4, stride=2)
-        self.layer3 = self._make_layer(256, 512, 6, stride=2)
-        self.layer4 = self._make_layer(512, 512, 3, stride=2)
+        self.layer1 = self.make_layer(64, 128, 3)
+        self.layer2 = self.make_layer(128, 256, 4, stride=2)
+        self.layer3 = self.make_layer(256, 512, 6, stride=2)
+        self.layer4 = self.make_layer(512, 512, 3, stride=2)
 
         # 分类用的全连接
         self.fc = nn.Dense(512, num_classes)
 
-    def _make_layer(self, inchannel, outchannel, block_num, stride=1):
+    def make_layer(self, inchannel, outchannel, block_num, stride=1):
         """
         构建layer,包含多个residual block
         """

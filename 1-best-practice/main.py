@@ -1,6 +1,5 @@
 '''The main file for the project'''
 # coding:utf8
-# pylint: disable=W0612
 import os
 import logging
 import csv
@@ -114,7 +113,9 @@ def train(**kwargs):
             summary_record.add_value(
                 'scalar', 'eval_acc', val_accuracy)
 
-            logging.basicConfig(format=f"epoch:{epoch},lr:{lr},loss:{loss_meter.eval()},train_cm:{str(confusion_matrix.eval())},val_cm:{str(val_cm.eval())}",
+            mat = f'''epoch:{epoch},lr:{lr},loss:{loss_meter.eval()},
+            train_cm:{str(confusion_matrix.eval())},val_cm:{str(val_cm.eval())}'''
+            logging.basicConfig(format=mat,
                 level=logging.DEBUG,
                 filename=opt.log_path,
                 filemode='a')

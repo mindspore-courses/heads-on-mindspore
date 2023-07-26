@@ -1,5 +1,6 @@
 '''alexnet'''
 # coding:utf8
+# pylint: disable=E0401
 import mindspore.nn as nn
 from .basic_module import BasicModule
 
