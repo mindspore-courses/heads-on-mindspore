@@ -159,6 +159,7 @@ def train(**kwargs):
 
     # 训练
     with SummaryRecord(log_dir="./summary_dir") as summary_record:
+        epoch = 0
         for epoch in iter(epochs):
             errord_meter.clear()
             errorg_meter.clear()
@@ -169,12 +170,12 @@ def train(**kwargs):
                 if i % opt.d_every == 0:
                     # 训练判别器
                     # 尽可能的把真图片判别为正确
-                    error_d_real, output = train_step_d(real_img, true_labels)
+                    error_d_real, _ = train_step_d(real_img, true_labels)
 
                 # 尽可能把假图片判别为错误
                 noises = ops.randn(opt.batch_size, opt.nz, 1, 1).copy()
                 error_d_fake = train_step_d1(noises, fake_labels)
-                fake_img, output = netg(noises)  # 根据噪声生成假图
+                output = netg(noises)  # 根据噪声生成假图
 
                 error_d = error_d_fake + error_d_real
 
