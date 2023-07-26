@@ -1,5 +1,6 @@
 '''data'''
 # coding:utf-8
+# pylint disable = C1801, E1130
 import os
 import json
 import re
@@ -28,7 +29,7 @@ def _parseRawData(author=None, constrain=None, src='./chinese-poetry/json/simpli
         result, _ = re.subn("{.*}", "", result)
         result, _ = re.subn("《.*》", "", result)
         result, _ = re.subn("《.*》", "", result)
-        result, _ = re.subn("[\]\[]", "", result)
+        result, _ = re.subn("[\\]\\[]", "", result)
         r = ""
         for s in result:
             if s not in set('0123456789-'):

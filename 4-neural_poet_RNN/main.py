@@ -1,6 +1,8 @@
 '''main'''
 # coding:utf8
-import sys, os
+# pylint disable = R1723, W0612
+import sys
+import os
 import tqdm
 import ipdb
 
@@ -14,6 +16,7 @@ from mindspore.train import Loss
 from mindspore.train.summary import SummaryRecord
 
 class Config():
+    '''配置类'''
     data_path = 'data/'  # 诗歌的文本文件存放路径
     pickle_path = 'tang.npz'  # 预处理好的二进制文件
     author = None  # 只学习某位作者的诗歌
@@ -50,29 +53,29 @@ def generate(model, start_words, ix2word, word2ix, prefix_words=None):
     比如start_words 为 春江潮水连海平，可以生成：
 
     """
-    
+
     results = list(start_words)
     start_word_len = len(start_words)
     # 手动设置第一个词为<START>
-    input = Tensor([word2ix['<START>']]).view(1, 1).long()
+    x = Tensor([word2ix['<START>']]).view(1, 1).long()
     hidden = None
 
     if prefix_words:
         for word in prefix_words:
-            output, hidden = model(input, hidden)
-            input = input.data.new([word2ix[word]]).view(1, 1)
+            output, hidden = model(x, hidden)
+            x = x.data.new([word2ix[word]]).view(1, 1)
 
     for i in range(opt.max_gen_len):
-        output, hidden = model(input, hidden)
+        output, hidden = model(x, hidden)
 
         if i < start_word_len:
             w = results[i]
-            input = input.data.new([word2ix[w]]).view(1, 1)
+            x = x.data.new([word2ix[w]]).view(1, 1)
         else:
             top_index = output.data[0].topk(1)[1][0].item()
             w = ix2word[top_index]
             results.append(w)
-            input = input.data.new([top_index]).view(1, 1)
+            x = x.data.new([top_index]).view(1, 1)
         if w == '<EOP>':
             del results[-1]
             break
@@ -91,7 +94,7 @@ def gen_acrostic(model, start_words, ix2word, word2ix, prefix_words=None):
     """
     results = []
     start_word_len = len(start_words)
-    input = (Tensor([word2ix['<START>']]).view(1, 1).long())
+    x = (Tensor([word2ix['<START>']]).view(1, 1).long())
     hidden = None
 
     index = 0  # 用来指示已经生成了多少句藏头诗
@@ -100,11 +103,11 @@ def gen_acrostic(model, start_words, ix2word, word2ix, prefix_words=None):
 
     if prefix_words:
         for word in prefix_words:
-            output, hidden = model(input, hidden)
-            input = (input.data.new([word2ix[word]])).view(1, 1)
+            output, hidden = model(x, hidden)
+            x = (x.data.new([word2ix[word]])).view(1, 1)
 
-    for i in range(opt.max_gen_len):
-        output, hidden = model(input, hidden)
+    for _ in range(opt.max_gen_len):
+        output, hidden = model(x, hidden)
         top_index = output.data[0].topk(1)[1][0].item()
         w = ix2word[top_index]
 
@@ -118,23 +121,23 @@ def gen_acrostic(model, start_words, ix2word, word2ix, prefix_words=None):
                 # 把藏头的词作为输入送入模型
                 w = start_words[index]
                 index += 1
-                input = (input.data.new([word2ix[w]])).view(1, 1)
+                x = (x.data.new([word2ix[w]])).view(1, 1)
         else:
             # 否则的话，把上一次预测是词作为下一个词输入
-            input = (input.data.new([word2ix[w]])).view(1, 1)
+            x = (x.data.new([word2ix[w]])).view(1, 1)
         results.append(w)
         pre_word = w
     return results
 
-
 def train(**kwargs):
+    '''模型训练，传入参数参考配置类'''
     for k, v in kwargs.items():
         setattr(opt, k, v)
 
     # 获取数据
     data, word2ix, ix2word = get_data(opt)
     data = Tensor.from_numpy(data)
-    dataloader = ds.GeneratorDataset(data, shuffle=True, num_workers=1)
+    dataloader = ds.GeneratorDataset(data, shuffle=True, num_parallel_workers=1)
     dataloader = dataloader.batch(batch_size=opt.batch_size)
 
     # 模型定义
@@ -173,7 +176,7 @@ def train(**kwargs):
                 data_ = data_.long().transpose(1, 0).contiguous()
                 input_, target = data_[:-1, :], data_[1:, :]
                 # 损失值以及预测值
-                loss, output = train_step(input_, target)
+                loss, _ = train_step(input_, target)
 
                 loss_meter.update(loss.item())
 
