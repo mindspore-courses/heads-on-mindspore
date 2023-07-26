@@ -202,6 +202,5 @@ def test(**kwargs):
 
 
 if __name__ == '__main__':
-    # import fire
-    # fire.Fire()
-    train()
+    import fire
+    fire.Fire()

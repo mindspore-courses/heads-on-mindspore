@@ -185,7 +185,7 @@ def train(**kwargs):
                     # 训练生成器
                     noises = noises.copy()
                     noises = ops.randn(opt.batch_size, opt.nz, 1, 1).copy()
-                    error_g, output = train_step_g(noises, true_labels)
+                    error_g, _ = train_step_g(noises, true_labels)
 
                     errorg_meter.update(error_g)
 
