@@ -1,6 +1,6 @@
 '''本文件为训练训练声学模型文件'''
 #encoding=utf-8
-#pylint: disable = C0325, W0401, W0614
+#pylint: disable = C0325, W0401, W0614, W0612, R0915, R0914
 
 import os
 import sys
