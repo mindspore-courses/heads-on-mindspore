@@ -69,9 +69,8 @@ resnet50.fc = lambda x: x
 for ii, (imgs, indexs) in tqdm.tqdm(enumerate(dataloader)):
     # 确保序号没有对应错
     assert indexs[0] == batch_size * ii
-    imgs = imgs.cuda()
     features = resnet50(imgs)
-    results[ii * batch_size:(ii + 1) * batch_size] = features.data.cpu()
+    results[ii * batch_size:(ii + 1) * batch_size] = features
 
 # 200000*2048 20万张图片，每张图片2048维的feature
 mindspore.save_checkpoint(results, 'results.ckpt')
