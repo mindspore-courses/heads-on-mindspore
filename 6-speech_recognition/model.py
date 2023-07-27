@@ -1,6 +1,6 @@
 '''模型文件'''
 #encoding=utf-8
-
+#pylint: disable = R1705, C0123
 from collections import OrderedDict
 import mindspore.nn as nn
 import mindspore.ops as ops

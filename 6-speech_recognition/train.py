@@ -91,7 +91,7 @@ def train(model, train_loader, loss_fn, optimizer, logger, print_every=20, USE_C
     logger.info("Epoch done, average loss: %.4f", average_loss)
     return average_loss
 
-def dev(model, dev_loader, loss_fn, decoder, logger, USE_CUDA=True):
+def dev(model, dev_loader, loss_fn, decoder, USE_CUDA=True):
     """验证集的计算过程，与train()不同的是不需要反向传播过程，并且需要计算字符正确率
     Args:
         model       :   模型
@@ -269,7 +269,7 @@ def main():
 
         loss = train(model, train_loader, loss_fn, optimizer, logger, print_every=20, USE_CUDA=USE_CUDA)
         loss_results.append(loss)
-        acc, dev_loss = dev(model, dev_loader, loss_fn, decoder, logger, USE_CUDA=USE_CUDA)
+        acc, dev_loss = dev(model, dev_loader, loss_fn, decoder, USE_CUDA=USE_CUDA)
         print("loss on dev set is %.4f", dev_loss)
         logger.info("loss on dev set is %.4f", dev_loss)
         dev_loss_results.append(dev_loss)
@@ -326,7 +326,8 @@ def main():
     cf.write(open(args.conf, 'w', encoding='utf-8'))
     params['epoch']=count
 
-    mindspore.save_checkpoint([CTC_Model.save_package(model, optimizer=optimizer, epoch=params, loss_results=loss_results, dev_loss_results=dev_loss_results, dev_cer_results=dev_cer_results)], best_path)
+    mindspore.save_checkpoint([CTC_Model.save_package(model, optimizer=optimizer, 
+                                                      epoch=params, loss_results=loss_results, dev_loss_results=dev_loss_results, dev_cer_results=dev_cer_results)], best_path)
 
 if __name__ == '__main__':
     main()

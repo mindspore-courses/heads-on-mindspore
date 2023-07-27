@@ -1,6 +1,6 @@
 '''音频处理'''
 #encoding=utf-8
-
+#pylint: disable = R1705, R0201
 import math
 
 LOG_ZERO = -99999999.0
