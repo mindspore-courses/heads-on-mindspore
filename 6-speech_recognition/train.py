@@ -1,6 +1,6 @@
-#encoding=utf-8
-
 '''本文件为训练训练声学模型文件'''
+#encoding=utf-8
+#pylint: disable = C0325, W0401, W0614
 
 import os
 import sys
@@ -163,13 +163,13 @@ def main():
     cf = ConfigParser.ConfigParser()
     try:
         cf.read(args.conf)
-    except:
+    except ValueError:
         print("conf file not exists")
         sys.exit(1)
     USE_CUDA = cf.getboolean('Training', 'use_cuda')
     try:
         seed = int(cf.get('Training', 'seed'))
-    except:
+    except ValueError:
         seed=randint(1,5000)
         cf.set('Training', 'seed', seed)
         cf.write(open(args.conf, 'w', encoding='utf-8'))
@@ -235,10 +235,6 @@ def main():
 
     #visualization for training
     title = 'TIMIT LSTM_CTC Acoustic Model'
-
-    opts = [dict(title=title+" Loss", ylabel = 'Loss', xlabel = 'Epoch'),
-            dict(title=title+" Loss on Dev", ylabel = 'DEV Loss', xlabel = 'Epoch'),
-            dict(title=title+' CER on DEV', ylabel = 'DEV CER', xlabel = 'Epoch')]
 
     count = 0
     learning_rate = init_lr
@@ -326,8 +322,9 @@ def main():
     cf.write(open(args.conf, 'w', encoding='utf-8'))
     params['epoch']=count
 
-    mindspore.save_checkpoint([CTC_Model.save_package(model, optimizer=optimizer, 
-                                                      epoch=params, loss_results=loss_results, dev_loss_results=dev_loss_results, dev_cer_results=dev_cer_results)], best_path)
+    mindspore.save_checkpoint([CTC_Model.save_package(model, optimizer=optimizer,
+                                                      epoch=params, loss_results=loss_results,
+                                                      dev_loss_results=dev_loss_results, dev_cer_results=dev_cer_results)], best_path)
 
 if __name__ == '__main__':
     main()

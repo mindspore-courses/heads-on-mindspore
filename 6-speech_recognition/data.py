@@ -1,6 +1,6 @@
 '''处理音频和标签文件，转化为网络可输入的格式'''
 #encoding=utf-8
-
+#pylint: disable = W0612
 import os
 import mindspore
 from mindspore import dtype as mstype
