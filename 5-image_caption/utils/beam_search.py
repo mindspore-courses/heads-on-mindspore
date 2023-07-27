@@ -1,4 +1,5 @@
 #coding:utf8
+#pylint: disable = R1705
 # Copyright 2016 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +52,7 @@ class Caption():
         assert isinstance(other, Caption)
         if self.score == other.score:
             return 0
-        if self.score < other.score:
+        elif self.score < other.score:
             return -1
         else:
             return 1

@@ -27,7 +27,7 @@ class CaptionModel(nn.Cell):
         embeddings = self.embedding(captions)
         # img_feats是2048维的向量,通过全连接层转为256维的向量,和词向量一样
         img_feats = self.fc(img_feats).unsqueeze(0)
-        # 将img_feats看成第一个词的词向量 
+        # 将img_feats看成第一个词的词向量
         embeddings = ops.cat([img_feats, embeddings], 0)
         # PackedSequence
         packed_embeddings = embeddings

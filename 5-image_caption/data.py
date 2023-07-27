@@ -1,11 +1,9 @@
-'''data'''
+'''数据文件'''
 # coding:utf8
 import mindspore
 import mindspore.ops as ops
 from mindspore import dtype as mstype
 import mindspore.dataset as ds
-import os
-from PIL import Image
 import numpy as np
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -14,27 +12,22 @@ IMAGENET_STD = [0.229, 0.224, 0.225]
 
 # - 区分训练集和验证集
 # - 不是随机返回每句话，而是根据index%5
-# - 
-
-# def create_collate_fn():
-#     def collate_fn():
-#         pass
-#     return collate_fn
 
 def create_collate_fn(padding, eos, max_length=50):
+    '''用于处理数据'''
     def collate_fn(img_cap):
         """
         将多个样本拼接在一起成一个batch
         输入： list of data，形如
         [(img1, cap1, index1), (img2, cap2, index2) ....]
-        
+
         拼接策略如下：
         - batch中每个样本的描述长度都是在变化的，不丢弃任何一个词\
           选取长度最长的句子，将所有句子pad成一样长
         - 长度不够的用</PAD>在结尾PAD
         - 没有START标识符
         - 如果长度刚好和词一样，那么就没有</EOS>
-        
+
         返回：
         - imgs(Tensor): batch_sie*2048
         - cap_tensor(Tensor): batch_size*max_length
@@ -58,7 +51,7 @@ def create_collate_fn(padding, eos, max_length=50):
 
 
 class CaptionDataset():
-
+    '''自定义数据集'''
     def __init__(self, opt):
         """
         Attributes:
@@ -101,6 +94,7 @@ class CaptionDataset():
 
 
 def get_dataloader(opt):
+    '''加载数据，返回数据字典'''
     dataset = CaptionDataset(opt)
     dataloader = ds.GeneratorDataset(dataset, num_parallel_workers=opt.num_workers, shuffle=opt.shuffle)
     dataloader = dataloader.batch(batch_size=opt.batch_size)

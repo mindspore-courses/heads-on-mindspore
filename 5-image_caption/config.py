@@ -1,7 +1,8 @@
+'''项目运行配置类'''
 # coding:utf8
 
-
 class Config:
+    '''配置参数'''
     caption_data_path = 'caption.ckpts'  # 经过预处理后的人工描述信息
     img_path = '/home/cy/caption_data/'
     # img_path='/mnt/ht/aichallenger/raw/ai_challenger_caption_train_20170902/caption_train_images_20170902/'

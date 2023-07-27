@@ -45,12 +45,12 @@ class CaptionDataset():
         return len(self.imgs)
 
 
-def get_dataloader(opt):
+def get_dataloader(g_opt):
     '''生成数据集'''
-    dataset = CaptionDataset(opt.caption_data_path)
-    dataloader = ds.GeneratorDataset(dataset, num_parallel_workers=opt.num_workers, shuffle=False)
-    dataloader = dataloader.batch(batch_size=opt.batch_size)
-    return dataloader
+    dataset = CaptionDataset(g_opt.caption_data_path)
+    g_dataloader = ds.GeneratorDataset(dataset, num_parallel_workers=g_opt.num_workers, shuffle=False)
+    g_dataloader = g_dataloader.batch(batch_size=g_opt.batch_size)
+    return g_dataloader
 
 
 # 数据

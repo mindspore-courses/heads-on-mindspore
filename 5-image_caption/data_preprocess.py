@@ -32,7 +32,7 @@ def process(**kwargs):
     # 8f00f3d0f1008e085ab660e70dffced16a8259f6.jpg -> 0
     id2ix = {item['image_id']: ix for ix, item in enumerate(data)}
     # 0-> 8f00f3d0f1008e085ab660e70dffced16a8259f6.jpg
-    ix2id = {ix: id for id, ix in (id2ix.items())}
+    ix2id = {ix: id for id, ix in id2ix.items()}
     assert id2ix[ix2id[10]] == 10
 
     captions = [item['caption'] for item in data]
