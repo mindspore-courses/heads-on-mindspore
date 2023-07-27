@@ -107,6 +107,6 @@ if __name__ == '__main__':
 
     Copt = Config()
     g_dataloader = get_dataloader(Copt)
-    for i, d in enumerate(g_dataloader):
-        print(i, d)
+    for idx, d in enumerate(g_dataloader):
+        print(idx, d)
         break
