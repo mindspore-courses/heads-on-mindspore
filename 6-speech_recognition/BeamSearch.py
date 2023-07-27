@@ -63,7 +63,7 @@ class ctcBeamSearch():
 
     def decode(self, inputs, inputs_list):
         """
-        Args: 
+        Args:
             inputs(FloatTesnor) :  Output of CTC(batch * timesteps * class)
             inputs_list(list)   :  the frames of each sample
         Returns:
@@ -98,7 +98,7 @@ class ctcBeamSearch():
                     # if nonempty labelling
                     if len(y)>0:
                         #相同的y两种可能，加入重复或者加入空白,如果之前没有字符，在NonBlank概率为0
-                        prNonBlank=last.entries[y].prNonBlank + math.log(mat[t, y[-1]])     
+                        prNonBlank=last.entries[y].prNonBlank + math.log(mat[t, y[-1]])
 
                     # calc probabilities
                     prBlank = (last.entries[y].prTotal) + math.log(mat[t, self.blank_index])
@@ -111,7 +111,7 @@ class ctcBeamSearch():
                     curr.entries[y].prTotal = self.log_add_prob(curr.entries[y].prTotal, prTotal)
 
                     #t时刻加入其它的label,此时Blank的概率为0，如果加入的label与最后一个相同，因为不能重复，所以上一个字符一定是blank
-                    for k in range(maxC):                                         
+                    for k in range(maxC):
                         if k != self.blank_index:
                             newY=y+(k,)
                             prNonBlank=self.calcExtPr(k, y, t, mat, last)

@@ -87,15 +87,15 @@ class CTC_Model(nn.Cell):
         bidirectional = rnn_param["bidirectional"]
         batch_norm = rnn_param["batch_norm"]
 
-        rnn = BatchRNN(input_size=rnn_input_size, hidden_size=rnn_hidden_size, 
+        rnn = BatchRNN(input_size=rnn_input_size, hidden_size=rnn_hidden_size,
                         rnn_type=rnn_type, bidirectional=bidirectional, dropout=drop_out,
                         batch_norm=False)
 
         rnns.append(('0', rnn))
         #堆叠RNN,除了第一次不使用batchnorm，其他层RNN都加入BachNorm
         for i in range(rnn_layers - 1):
-            rnn = BatchRNN(input_size=self.num_directions*rnn_hidden_size, 
-                            hidden_size=rnn_hidden_size, rnn_type=rnn_type, 
+            rnn = BatchRNN(input_size=self.num_directions*rnn_hidden_size,
+                            hidden_size=rnn_hidden_size, rnn_type=rnn_type,
                             bidirectional=bidirectional, dropout=drop_out, batch_norm=batch_norm)
             rnns.append(('%d' % (i+1), rnn))
 

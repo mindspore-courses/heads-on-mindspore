@@ -1,6 +1,6 @@
 '''本文件为数据集测试文件，解码类型在run.sh中定义'''
 #encoding=utf-8
-#pylint: disable = E1133
+#pylint: disable = E1133, W0614, W0401
 import time
 import argparse
 import configparser as ConfigParser
@@ -43,7 +43,7 @@ def test():
     if decoder_type == 'Greedy':
         decoder  = GreedyDecoder(int2char, space_idx=len(int2char) - 1, blank_index = 0)
     else:
-        decoder = BeamDecoder(int2char, beam_width=beam_width, blank_index = 0, space_idx = len(int2char) - 1)    
+        decoder = BeamDecoder(int2char, beam_width=beam_width, blank_index = 0, space_idx = len(int2char) - 1)
 
     total_wer = 0
     total_cer = 0

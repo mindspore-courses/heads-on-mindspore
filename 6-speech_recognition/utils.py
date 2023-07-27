@@ -51,7 +51,7 @@ def parse_audio(path, audio_conf, windows, normalize=False):
         mean = spect.mean()
         std = spect.std()
         spect.add_(-mean)
-        spect.div_(std)  
+        spect.div_(std)
     return spect.transpose(0,1)
 
 def process_label_file(label_file, char2int):

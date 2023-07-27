@@ -1,6 +1,6 @@
 #encoding=utf-8
 
-#本文件为训练训练声学模型文件
+'''本文件为训练训练声学模型文件'''
 
 import os
 import sys
@@ -11,7 +11,6 @@ from logging.handlers import RotatingFileHandler
 import argparse
 from random import randint
 import configparser as ConfigParser
-import numpy as np
 
 import mindspore
 import mindspore.nn as nn
@@ -24,7 +23,7 @@ from data import int2char, SpeechDataset, SpeechDataLoader
 RNN = {'lstm': nn.LSTM, 'rnn':nn.RNN, 'gru':nn.GRU }
 
 parser = argparse.ArgumentParser(description='lstm_ctc')
-parser.add_argument('--conf', default='./conf/ctc_model_setting.conf' , 
+parser.add_argument('--conf', default='./conf/ctc_model_setting.conf' ,
                     help='conf file with Argument of LSTM and training')
 
 def train(model, train_loader, loss_fn, optimizer, logger, print_every=20, USE_CUDA=True):
@@ -225,7 +224,7 @@ def main():
     end_adjust_acc = cf.getfloat('Training', 'end_adjust_acc')
     decay = cf.getfloat("Training", 'lr_decay')
     weight_decay = cf.getfloat("Training", 'weight_decay')
-    
+
     params = { 'num_epoches':num_epoches, 'end_adjust_acc':end_adjust_acc, 'seed':seed,
             'decay':decay, 'learning_rate':init_lr, 'weight_decay':weight_decay, 'batch_size':batch_size, 'n_feats':train_dataset.n_feats }
     print(params)
@@ -240,7 +239,6 @@ def main():
     opts = [dict(title=title+" Loss", ylabel = 'Loss', xlabel = 'Epoch'),
             dict(title=title+" Loss on Dev", ylabel = 'DEV Loss', xlabel = 'Epoch'),
             dict(title=title+' CER on DEV', ylabel = 'DEV CER', xlabel = 'Epoch')]
-    # viz_window = [None, None, None]
 
     count = 0
     learning_rate = init_lr
@@ -319,16 +317,6 @@ def main():
         logger.info("epoch %d done, dev acc is: %.4f, time_used: %.4f minutes",
                     count, acc, time_used)
 
-        # x_axis = range(count)
-        # y_axis = [loss_results[0:count], dev_loss_results[0:count], dev_cer_results[0:count]]
-        # for i,_ in enumerate(viz_window):
-        #     if viz_window[i] is None:
-        #         viz_window[i] = viz.line(X = np.array(x_axis), 
-        #                                  Y = np.array(y_axis[i]), opts = opts[i],)
-        #     else:
-        #         viz.line(X = np.array(x_axis), 
-        #                  Y = np.array(y_axis[i]), win = viz_window[i], update = 'replace',)
-
     print("End training, best dev loss is: %.4f, acc is: %.4f", loss_best_true, acc_best)
     logger.info("End training, best dev loss acc is: %.4f, acc is: %.4f" , loss_best_true, acc_best)
     model.load_state_dict(best_model_state)
@@ -342,5 +330,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
