@@ -1,6 +1,6 @@
 '''main'''
 # coding:utf8
-# pylint: disable = R1723, W0612
+# pylint: disable = R1723, E1130, W0612
 import sys
 import os
 import tqdm
@@ -237,9 +237,9 @@ def gen(**kwargs):
         start_words = opt.start_words.decode('utf8')
         prefix_words = opt.prefix_words.decode('utf8') if opt.prefix_words else None
 
-    start_words = start_words.replace(',', u'，') \
-        .replace('.', u'。') \
-        .replace('?', u'？')
+    start_words = start_words.replace(',', '，') \
+        .replace('.', '。') \
+        .replace('?', '？')
 
     gen_poetry = gen_acrostic if opt.acrostic else generate
     result = gen_poetry(model, start_words, ix2word, word2ix, prefix_words)
