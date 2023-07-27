@@ -1,7 +1,7 @@
 #encoding=utf-8
-
-#greedy decoder and beamsearch decoder for ctc
-
+#pylint: disable = E1121, R0201, R1705
+'''greedy decoder and beamsearch decoder for ctc'''
+import BeamSearch
 import mindspore.ops as ops
 
 class Decoder():
@@ -36,10 +36,10 @@ class Decoder():
         strings = self.decode(prob_tensor, frame_seq_len)
         targets = self._unflatten_targets(targets, target_sizes)
         target_strings = self._process_strings(self._convert_to_strings(targets))
-        
+
         cer = 0
         wer = 0
-        for x in range(len(target_strings)):
+        for x, _ in enumerate(target_strings):
             cer += self.cer(strings[x], target_strings[x])
             wer += self.wer(strings[x], target_strings[x])
             self.num_word += len(target_strings[x].split())
@@ -74,7 +74,7 @@ class Decoder():
             string = self._process_string(seq, remove_rep)
             processed_strings.append(string)
         return processed_strings
-   
+
     def _process_string(self, seq, remove_rep = False):
         string = ''
         for i, char in enumerate(seq):
@@ -98,7 +98,7 @@ class Decoder():
             strings  :  转化后的字符序列
         """
         strings = []
-        for x in range(len(seq)):
+        for x, _ in enumerate(seq):
             seq_len = sizes[x] if sizes is not None else len(seq[x])
             string = self._convert_to_string(seq[x], seq_len)
             strings.append(string)
@@ -112,7 +112,7 @@ class Decoder():
             return result
         else:
             return ''.join(result)
- 
+
     def wer(self, s1, s2):
         "将空格作为分割计算词错误率"
         b = set(s1.split() + s2.split())
@@ -125,12 +125,14 @@ class Decoder():
     def cer(self, s1, s2):
         "计算字符错误率"
         return self._edit_distance(s1, s2)
-    
+
     def _edit_distance(self, src_seq, tgt_seq):
         "计算两个序列的编辑距离，用来计算字符错误率"
         L1, L2 = len(src_seq), len(tgt_seq)
-        if L1 == 0: return L2
-        if L2 == 0: return L1
+        if L1 == 0:
+            return L2
+        if L2 == 0:
+            return L1
         # construct matrix of size (L1 + 1, L2 + 1)
         dist = [[0] * (L2 + 1) for i in range(L1 + 1)]
         for i in range(1, L2 + 1):
@@ -168,9 +170,8 @@ class BeamDecoder(Decoder):
     "Beam search 解码。解码结果为整个序列概率的最大值"
     def __init__(self, int2char, beam_width = 200, blank_index = 0, space_idx = 28):
         self.beam_width = beam_width
-        super(BeamDecoder, self).__init__(int2char, space_idx=space_idx, blank_index=blank_index)
+        super().__init__(int2char, space_idx=space_idx, blank_index=blank_index)
 
-        import BeamSearch
         self._decoder = BeamSearch.ctcBeamSearch(int2char, beam_width, blank_index = blank_index)
 
     def decode(self, prob_tensor, frame_seq_len=None):
@@ -184,4 +185,3 @@ class BeamDecoder(Decoder):
         probs = prob_tensor.transpose(0, 1)
         res = self._decoder.decode(probs, frame_seq_len)
         return res
-
