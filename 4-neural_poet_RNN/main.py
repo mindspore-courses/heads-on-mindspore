@@ -1,6 +1,6 @@
 '''main'''
 # coding:utf8
-# pylint disable = R1723, W0612
+# pylint: disable = R1723, W0612
 import sys
 import os
 import tqdm

@@ -1,6 +1,6 @@
 '''data'''
 # coding:utf-8
-# pylint disable = C1801, E1130
+# pylint: disable = C1801
 import os
 import json
 import re
@@ -71,7 +71,7 @@ def _parseRawData(author=None, constrain=None, src='./chinese-poetry/json/simpli
     return data
 
 def pad_sequences(sequences,
-                  maxlen=None,
+                  maxlen : int=None,
                   dtype='int32',
                   padding='pre',
                   truncating='pre',
