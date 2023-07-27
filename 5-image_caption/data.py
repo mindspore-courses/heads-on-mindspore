@@ -105,8 +105,8 @@ def get_dataloader(opt):
 if __name__ == '__main__':
     from config import Config
 
-    opt = Config()
-    dataloader = get_dataloader(opt)
-    for ii, data in enumerate(dataloader):
-        print(ii, data)
+    Copt = Config()
+    g_dataloader = get_dataloader(Copt)
+    for i, d in enumerate(g_dataloader):
+        print(i, d)
         break
