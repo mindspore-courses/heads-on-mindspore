@@ -1,11 +1,12 @@
+'''
+本文件提供载入音频文件的函数,提取音频对数幅度谱的函数以及处理文本标签的函数
+语音的对数频谱作为网络的输入
+'''
 #encoding=utf-8
-
-#本文件提供载入音频文件的函数,提取音频对数幅度谱的函数以及处理文本标签的函数
-#语音的对数频谱作为网络的输入
+#pylint: disable = W0612
 
 import librosa
 import scipy.io.wavfile as wav
-import numpy as np
 import mindspore
 from mindspore import dtype as mstype
 
@@ -41,10 +42,10 @@ def parse_audio(path, audio_conf, windows, normalize=False):
     window = windows[audio_conf['window']]
     D = librosa.stft(y, n_fft=n_fft, hop_length=hop_length,
                         win_length=win_length, window=window)
-    spect, phase = librosa.magphase(D)
+    spect, _ = librosa.magphase(D)
     spect = mindspore.Tensor(spect, dtype=mstype.float32)
     spect = spect.log1p()
-    
+
     #每句话自己做归一化
     if normalize:
         mean = spect.mean()
@@ -62,17 +63,15 @@ def process_label_file(label_file, char2int):
         label_dict(list)    :  所有句子的标签，每个句子是list类型
     """
     label_all = []
-    with open(label_file, 'r') as f:
+    with open(label_file, 'r', encoding='utf-8') as f:
         for label in f.readlines():
             label = label.strip()
             label_list = []
-            utt = label.split('\t', 1)[0]
             label = label.split('\t', 1)[1]
-            for i in range(len(label)):
+            for i, _ in enumerate(label):
                 if label[i].lower() in char2int:
                     label_list.append(char2int[label[i].lower()])
                 else:
-                    print("%s not in the label map list" % label[i].lower())
+                    print(f"{str(label[i].lower())} not in the label map list")
             label_all.append(label_list)
     return label_all
-

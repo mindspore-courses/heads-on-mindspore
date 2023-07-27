@@ -1,6 +1,6 @@
 '''本文件为数据集测试文件，解码类型在run.sh中定义'''
 #encoding=utf-8
-
+#pylint: disable = E1133
 import time
 import argparse
 import configparser as ConfigParser
@@ -13,6 +13,7 @@ from data  import int2char, SpeechDataset, SpeechDataLoader
 parser = argparse.ArgumentParser()
 parser.add_argument('--conf', help='conf file for training')
 def test():
+    '''模型测试'''
     args = parser.parse_args()
     cf = ConfigParser.ConfigParser()
     cf.read(args.conf)
@@ -24,7 +25,6 @@ def test():
 
     rnn_param = package["rnn_param"]
     num_class = package["num_class"]
-    n_feats = package['epoch']['n_feats']
     drop_out = package['_drop_out']
 
     decoder_type =  cf.get('Decode', 'decoder_type')
@@ -34,7 +34,8 @@ def test():
 
     model = CTC_Model(rnn_param=rnn_param, num_class=num_class, drop_out=drop_out)
 
-    test_loader = SpeechDataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=4, pin_memory=False)
+    test_loader = SpeechDataLoader(test_dataset, batch_size=8,
+                                   shuffle=False, num_workers=4, pin_memory=False)
 
     model.load_state_dict(package['state_dict'])
     model.set_train()
