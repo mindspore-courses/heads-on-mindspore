@@ -20,13 +20,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import heapq
 import mindspore
 import mindspore.ops as ops
 from mindspore import dtype as mstype
-import heapq
 
 
-class Caption(object):
+class Caption():
     """Represents a complete or partial caption."""
 
     def __init__(self, sentence, state, logprob, score, metadata=None):
@@ -51,7 +51,7 @@ class Caption(object):
         assert isinstance(other, Caption)
         if self.score == other.score:
             return 0
-        elif self.score < other.score:
+        if self.score < other.score:
             return -1
         else:
             return 1
@@ -67,7 +67,7 @@ class Caption(object):
         return self.score == other.score
 
 
-class TopN(object):
+class TopN():
     """Maintains the top n elements of an incrementally provided set."""
 
     def __init__(self, n):
@@ -75,6 +75,7 @@ class TopN(object):
         self._data = []
 
     def size(self):
+        '''返回数据长度'''
         assert self._data is not None
         return len(self._data)
 
@@ -109,7 +110,7 @@ class TopN(object):
         self._data = []
 
 
-class CaptionGenerator(object):
+class CaptionGenerator():
     """Class to generate captions from an image-to-text model."""
 
     def __init__(self,
@@ -175,8 +176,6 @@ class CaptionGenerator(object):
             input_feed = mindspore.Tensor([c.sentence[-1]
                                            for c in partial_captions_list], dtype=mstype.int64)
 
-            if rnn_input.is_cuda:
-                input_feed = input_feed
             input_feed = mindspore.Tensor(input_feed)
             state_feed = [c.state for c in partial_captions_list]
             if isinstance(state_feed[0], tuple):

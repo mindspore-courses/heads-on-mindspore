@@ -3,21 +3,15 @@
 利用resnet50提取图片的语义信息
 并保存层results.pth
 """
+import os
 from config import Config
 import tqdm
-# import torch as t
-# from torch.autograd import Variable
-# import torchvision as tv
-# from torch.utils import data
-import os
 from PIL import Image
-import numpy as np
 import mindspore
 import mindspore.dataset as ds
 import mindspore.ops as ops
 import mindcv
 
-# t.set_grad_enabled(False)
 opt = Config()
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -26,7 +20,7 @@ normalize = ds.vision.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD)
 
 
 class CaptionDataset():
-
+    '''自定义数据类'''
     def __init__(self, caption_data_path):
         self.transforms = ds.transforms.Compose([
             ds.vision.Decode(),
@@ -52,6 +46,7 @@ class CaptionDataset():
 
 
 def get_dataloader(opt):
+    '''生成数据集'''
     dataset = CaptionDataset(opt.caption_data_path)
     dataloader = ds.GeneratorDataset(dataset, num_parallel_workers=opt.num_workers, shuffle=False)
     dataloader = dataloader.batch(batch_size=opt.batch_size)
@@ -63,6 +58,7 @@ opt.batch_size = 256
 dataloader = get_dataloader(opt)
 cap_tensor = ops.fill(type=mindspore.float32,shape=(len(dataloader), 2048), value=0)
 batch_size = opt.batch_size
+results = {}
 
 # 模型
 resnet50 = mindcv.models.resnet50(pretrained=True)

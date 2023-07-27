@@ -1,12 +1,13 @@
+'''数据处理'''
 # coding:utf8
-import mindspore
-import numpy as np
 import json
 import jieba
 import tqdm
+import mindspore
 
 
 class Config:
+    '''配置类'''
     annotation_file = 'caption_train_annotations_20170902.json'
     unknown = '</UNKNOWN>'
     end = '</EOS>'
@@ -20,6 +21,7 @@ class Config:
 # MAX_LENS = 25,
 
 def process(**kwargs):
+    '''处理过程'''
     opt = Config()
     for k, v in kwargs.items():
         setattr(opt, k, v)
@@ -42,7 +44,6 @@ def process(**kwargs):
     def update(word_nums):
         def fun(word):
             word_nums[word] = word_nums.get(word, 0) + 1
-            return None
 
         return fun
 

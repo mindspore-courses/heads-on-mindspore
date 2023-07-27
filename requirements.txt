@@ -8,4 +8,5 @@ mindspore==2.0.0
 pylint==2.7.4
 librosa
 scipy
+jieba
 ConfigParser==6.0.0

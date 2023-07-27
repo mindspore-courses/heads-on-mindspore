@@ -1,15 +1,16 @@
+'''搭建模型'''
 # coding:utf8
+import time
 import mindspore.nn as nn
 import mindspore.ops as ops
 import mindspore
-# from torch.nn.utils.rnn import pack_padded_sequence
 from utils.beam_search import CaptionGenerator
-import time
 
 
 class CaptionModel(nn.Cell):
+    '''模型'''
     def __init__(self, opt, word2ix, ix2word):
-        super(CaptionModel, self).__init__()
+        super().__init__()
         self.ix2word = ix2word
         self.word2ix = word2ix
         self.opt = opt
@@ -29,8 +30,8 @@ class CaptionModel(nn.Cell):
         # 将img_feats看成第一个词的词向量 
         embeddings = ops.cat([img_feats, embeddings], 0)
         # PackedSequence
-        packed_embeddings = embeddings #pack_padded_sequence(embeddings, lengths)
-        outputs, state = self.rnn(packed_embeddings)
+        packed_embeddings = embeddings
+        outputs, state = self.rnn(packed_embeddings, seq_length = lengths)
         # lstm的输出作为特征用来分类预测下一个词的序号
         # 因为输入是PackedSequence,所以输出的output也是PackedSequence
         # PackedSequence第一个元素是Variable,第二个元素是batch_sizes,
@@ -56,12 +57,13 @@ class CaptionModel(nn.Cell):
             img = img.cuda()
         img =img.unsqueeze(0)
         img = self.fc(img).unsqueeze(0)
-        sentences, score = cap_gen.beam_search(img)
+        sentences, _ = cap_gen.beam_search(img)
         sentences = [' '.join([self.ix2word[idx] for idx in sent])
                      for sent in sentences]
         return sentences
 
     def states(self):
+        '''获取数据'''
         opt_state_dict = {attr: getattr(self.opt, attr)
                           for attr in dir(self.opt)
                           if not attr.startswith('__')}
@@ -71,6 +73,7 @@ class CaptionModel(nn.Cell):
         }
 
     def save(self, path=None, **kwargs):
+        '''保存参数'''
         if path is None:
             path = '{prefix}_{time}'.format(prefix=self.opt.prefix,
                                             time=time.strftime('%m%d_%H%M'))
@@ -80,6 +83,7 @@ class CaptionModel(nn.Cell):
         return path
 
     def load(self, path, load_opt=False):
+        '''加载对应数据集'''
         data = mindspore.load_checkpoint(path, choice_func=lambda s, l: s)
         state_dict = data['state_dict']
         mindspore.load_param_into_net(self, state_dict)
@@ -91,4 +95,5 @@ class CaptionModel(nn.Cell):
         return self
 
     def get_optimizer(self, lr):
+        '''返回优化器'''
         return nn.Adam(self.trainable_params(), lr=lr)

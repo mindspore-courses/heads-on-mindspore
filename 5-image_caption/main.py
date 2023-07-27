@@ -1,3 +1,4 @@
+'''主程序'''
 # coding:utf8
 import os
 import tqdm
@@ -20,6 +21,7 @@ IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
 def generate(**kwargs):
+    '''生成结果'''
     opt = Config()
     for k, v in kwargs.items():
         setattr(opt, k, v)
@@ -58,6 +60,7 @@ def generate(**kwargs):
 
 
 def train(**kwargs):
+    '''训练'''
     opt = Config()
     for k, v in kwargs.items():
         setattr(opt, k, v)
@@ -81,7 +84,6 @@ def train(**kwargs):
         model.load(opt.model_ckpt)
     optimizer = model.get_optimizer(opt.lr)
     criterion = nn.CrossEntropyLoss()
-   
 
     # 统计
     loss_meter = Loss()
@@ -109,7 +111,7 @@ def train(**kwargs):
             loss_meter.clear()
             for ii, (imgs, (captions, lengths), indexes) in tqdm.tqdm(enumerate(dataloader)):
                 # 训练
-                loss, score = train_step(imgs, captions, lengths)
+                loss, _ = train_step(imgs, captions, lengths)
 
                 loss_meter.update(loss.item())
 
