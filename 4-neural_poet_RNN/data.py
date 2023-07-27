@@ -1,6 +1,6 @@
 '''data'''
 # coding:utf-8
-# pylint: disable = C1801
+# pylint: disable = C1801, E1130
 import os
 import json
 import re
