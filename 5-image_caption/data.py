@@ -97,8 +97,7 @@ def get_dataloader(opt):
     '''加载数据，返回数据字典'''
     dataset = CaptionDataset(opt)
     dataloader = ds.GeneratorDataset(dataset, num_parallel_workers=opt.num_workers, shuffle=opt.shuffle)
-    dataloader = dataloader.batch(batch_size=opt.batch_size)
-    dataloader = dataloader.apply(create_collate_fn(dataset.padding, dataset.end))
+    dataloader = dataloader.batch(batch_size=opt.batch_size, per_batch_map=create_collate_fn(dataset.padding, dataset.end))
     return dataloader
 
 
