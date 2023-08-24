@@ -2,7 +2,7 @@
 # coding:utf8
 import os
 from PIL import Image
-import mindspore.dataset.vision as vision
+import mindspore.dataset as ds
 
 class DogCat:
     """
@@ -33,14 +33,14 @@ class DogCat:
                                     std=[0.229, 0.224, 0.225])
 
             if self.test or not train:
-                self.transforms = vision.Compose([
+                self.transforms = ds.transforms.Compose([
                     vision.Resize([224, 224]),
                     vision.CenterCrop(224),
                     vision.ToTensor(),
                     normalize
                 ])
             else:
-                self.transforms = vision.Compose([
+                self.transforms = ds.transforms.Compose([
                     vision.Resize([256, 256]),
                     vision.RandomReSizedCrop(224),
                     vision.RandomHorizontalFlip(),
