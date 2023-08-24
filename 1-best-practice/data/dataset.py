@@ -3,7 +3,6 @@
 import os
 from PIL import Image
 import mindspore.dataset as ds
-import mindspore.dataset.vision as vision
 
 class DogCat:
     """
